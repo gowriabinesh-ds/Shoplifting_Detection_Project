@@ -1,7 +1,8 @@
 """
 STEP 8: FASTAPI WEB SERVICE WITH ALERT SOUND
 =============================================
- 
+Creates a web app where users upload videos and get shoplifting prediction.
+
 To run:
   In Anaconda Prompt (shoplifting environment active):
   cd "C:\Hope AI\11. Deep Learning\Shoplifting_Project\scripts"
@@ -14,40 +15,43 @@ import os
 import cv2
 import torch
 import numpy as np
-import tempfile
+import tempfile                 # Temporary file storage
 from pathlib import Path
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi import FastAPI, UploadFile, File, HTTPException  # Web API framework
+from fastapi.responses import JSONResponse, HTMLResponse      # API responses
 import torchvision.transforms as T
  
-from step4_model import get_model
+from step4_model import get_model  # Load model architecture
  
 # ── Paths ──────────────────────────────────────────────────────────────────────
-PROJECT_DIR = Path(r"C:\Hope AI\11. Deep Learning\Shoplifting_Project")
-CHECKPOINT  = PROJECT_DIR / "checkpoints" / "best_model.pth"
+PROJECT_DIR = Path(r"C:\Hope AI\11. Deep Learning\Shoplifting_Project") # Project folder
+CHECKPOINT  = PROJECT_DIR / "checkpoints" / "best_model.pth"            # Trained model path
  
 # ── App ────────────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="Shoplifting Detection API",
-    description="Upload a CCTV video clip to detect shoplifting.",
+    title="Shoplifting Detection API", # API name
+    description="Upload a CCTV video clip to detect shoplifting.", 
     version="1.0.0",
 )
- 
+
+# ── Settings ─────────────────────────────────────────
 DEVICE     = "cuda" if torch.cuda.is_available() else "cpu"
 NUM_FRAMES = 16
 IMG_SIZE   = 112
  
-# Load model once at startup
+# ── Load model once when app starts ─────────────────
 print(f"Loading model on {DEVICE}...")
 if not CHECKPOINT.exists():
     raise FileNotFoundError(f"Checkpoint not found: {CHECKPOINT}\nRun step5_train.py first!")
  
-ckpt   = torch.load(str(CHECKPOINT), map_location=DEVICE)
-_model = get_model(ckpt["config"]["num_classes"]).to(DEVICE)
-_model.load_state_dict(ckpt["model_state"])
-_model.eval()
+ckpt   = torch.load(str(CHECKPOINT), map_location=DEVICE)    # Load saved model
+_model = get_model(ckpt["config"]["num_classes"]).to(DEVICE) # Recreate model
+_model.load_state_dict(ckpt["model_state"])                  # Load weights
+_model.eval()                                                # Set model to evaluation mode
 print("✅ Model ready.")
- 
+
+
+# ── Preprocessing ─────────────────────────────────── 
 transform = T.Compose([
     T.ToPILImage(),
     T.Resize((IMG_SIZE, IMG_SIZE)),
@@ -497,28 +501,28 @@ def dashboard():
 # ── Health check ──────────────────────────────────────────────────────────────
 @app.get("/health")
 def health():
-    return {"status": "ok", "device": DEVICE}
+    return {"status": "ok", "device": DEVICE}  # Check if API is running
  
  
-# ── Predict endpoint ──────────────────────────────────────────────────────────
+# ── Prediction API ──────────────────────────────────────────────────────────
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     if not file.filename.lower().endswith((".mp4", ".avi", ".mov", ".mkv")):
-        raise HTTPException(status_code=400, detail="Please upload .mp4, .avi or .mov file.")
+        raise HTTPException(status_code=400, detail="Please upload .mp4, .avi or .mov file.")  # Reject unsupported files
  
-    video_bytes = await file.read()
+    video_bytes = await file.read()  # Read uploaded file
  
     try:
-        frames = extract_frames_from_bytes(video_bytes)
+        frames = extract_frames_from_bytes(video_bytes)   # Extract frames
         if len(frames) < 4:
             raise HTTPException(status_code=422, detail="Video too short to analyse.")
-        result = run_prediction(frames)
-        result["filename"] = file.filename
-        return JSONResponse(content=result)
+        result = run_prediction(frames)      # Run model
+        result["filename"] = file.filename   # Add filename
+        return JSONResponse(content=result)  # Return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))  # Handle errors
  
- 
+# ── Run API server ──────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # Start FastAPI server
