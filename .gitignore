@@ -1,8 +1,20 @@
+# Large data folders — not uploaded to GitHub
 data/
+
+# Trained model files — too large for GitHub
 checkpoints/
+
+# Exported model files — too large for GitHub
 exports/
+
+# Auto-saved alert clips — generated at runtime
 alerts/
+
+# Python cache — auto-generated, not needed
 __pycache__/
 *.pyc
 *.pyo
-*.env
+
+# Spyder IDE files — not needed on GitHub
+.spyproject/
+*.spydata
