@@ -1,0 +1,30 @@
+# Shoplifting Detection System — Requirements
+# Install with: pip install -r requirements.txt
+#
+# Note: Install PyTorch separately first:
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# Core Deep Learning 
+torch>=2.2.0
+torchvision>=0.17.0
+
+# Video & Image Processing 
+opencv-python>=4.9.0
+Pillow>=10.3.0
+
+# Data & ML Utilities
+numpy>=1.26.0
+scikit-learn>=1.4.0
+tqdm>=4.66.0
+
+# Web API
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# Model Export 
+onnx>=1.16.0
+onnxruntime>=1.18.0
+
+# Optional (for TensorBoard training curves) 
+tensorboard>=2.16.0
