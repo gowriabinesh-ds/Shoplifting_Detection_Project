@@ -20,11 +20,14 @@ This project builds an **end-to-end deep learning pipeline** that:
 
 ## 🎯 Demo
 
-| Normal Activity | Shoplifting Detected |
-|----------------|---------------------|
-| ✅ Green label - no alarm | 🚨 Red label - beep alarm fires |
-| Confidence bar low | Confidence bar fills red |
-| Alert: `false` | Alert: `true` - evidence clip saved |
+| | Normal Activity | Shoplifting Detected |
+|-|----------------|---------------------|
+| Label | ✅ NORMAL — green card | 🚨 SHOPLIFTING DETECTED — red card |
+| Confidence | Low probability bar | Red bar fills to 86%+ |
+| Stats shown | Confidence · Prob Normal · Prob Shoplifting | Confidence · Prob Normal · Prob Shoplifting |
+| Alert badge | 🟢 No Alert — Below Threshold | 🔴 ALERT TRIGGERED — Staff Notified |
+| Sound | Silent | 3 beep alarm plays automatically |
+| Evidence | Nothing saved | Clip auto-saved to alerts folder |
 
 **API Response Example:**
 
@@ -37,8 +40,6 @@ This project builds an **end-to-end deep learning pipeline** that:
 | Alert | 🔴 ALERT TRIGGERED — Staff Notified |
 
 ```
-
----
 
 ## 🗂 Project Structure
 
