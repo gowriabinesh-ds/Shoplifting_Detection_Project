@@ -39,7 +39,7 @@ This project builds an **end-to-end deep learning pipeline** that:
 | Prob Shoplifting | 86.1% |
 | Alert | 🔴 ALERT TRIGGERED — Staff Notified |
 
-```
+---
 
 ## 🗂 Project Structure
 
@@ -250,7 +250,7 @@ curl -X POST http://localhost:8000/predict \
      -F "file=@your_video.mp4"
 ```
 
-**Response:**
+**Response (raw JSON from API):**
 ```json
 {
   "label": "shoplifting",
@@ -261,7 +261,16 @@ curl -X POST http://localhost:8000/predict \
   "filename": "your_video.mp4"
 }
 ```
-> When `alert: true` — the dashboard shows a red flashing card, plays a 3-beep alarm, and saves an evidence clip automatically.
+
+**Response (visualised on dashboard at `http://localhost:8000`):**
+
+| Field | Output |
+|-------|--------|
+| Label | 🚨 SHOPLIFTING DETECTED |
+| Confidence | 86.1% |
+| Prob Normal | 13.9% |
+| Prob Shoplifting | 86.1% |
+| Alert | 🔴 ALERT TRIGGERED — Staff Notified + 3 beep alarm |
 
 **Interactive dashboard:** `http://localhost:8000`
 **Swagger UI docs:** `http://localhost:8000/docs`
