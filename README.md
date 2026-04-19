@@ -5,7 +5,7 @@
 
 ## 📌 Overview
 
-UK retailers lose **£4.7 billion annually** to shoplifting. Traditional CCTV systems only record — they don't watch. Staff cannot monitor every aisle, and UK law limits physical intervention.
+UK retailers lose **£4.7 billion annually** to shoplifting. Traditional CCTV systems only record - they don't watch. Staff cannot monitor every aisle, and UK law limits physical intervention.
 
 This project builds an **end-to-end deep learning pipeline** that:
 - Analyses CCTV footage in real time using a 3D convolutional neural network
@@ -22,9 +22,9 @@ This project builds an **end-to-end deep learning pipeline** that:
 
 | Normal Activity | Shoplifting Detected |
 |----------------|---------------------|
-| ✅ Green label — no alarm | 🚨 Red label — beep alarm fires |
+| ✅ Green label - no alarm | 🚨 Red label - beep alarm fires |
 | Confidence bar low | Confidence bar fills red |
-| Alert: `false` | Alert: `true` — evidence clip saved |
+| Alert: `false` | Alert: `true` - evidence clip saved |
 
 **API Response Example:**
 ```json
