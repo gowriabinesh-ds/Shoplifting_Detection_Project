@@ -27,15 +27,15 @@ This project builds an **end-to-end deep learning pipeline** that:
 | Alert: `false` | Alert: `true` - evidence clip saved |
 
 **API Response Example:**
-```json
-{
-  "label": "shoplifting",
-  "confidence": 0.861,
-  "prob_normal": 0.139,
-  "prob_shoplifting": 0.861,
-  "alert": true,
-  "filename": "Shoplifting001_x264.mp4"
-}
+
+| Field | Value |
+|-------|-------|
+| Label | Shoplifting |
+| Confidence | 86.1% |
+| Prob Normal | 13.9% |
+| Prob Shoplifting | 86.1% |
+| Alert | 🔴 ALERT TRIGGERED — Staff Notified |
+
 ```
 
 ---
@@ -260,6 +260,7 @@ curl -X POST http://localhost:8000/predict \
   "filename": "your_video.mp4"
 }
 ```
+> When `alert: true` — the dashboard shows a red flashing card, plays a 3-beep alarm, and saves an evidence clip automatically.
 
 **Interactive dashboard:** `http://localhost:8000`
 **Swagger UI docs:** `http://localhost:8000/docs`
