@@ -5,7 +5,7 @@
 
 ## 📌 Overview
 
-UK retailers lose **£4.7 billion annually** to shoplifting. Traditional CCTV systems only record, they don't watch. Staff cannot monitor every aisle, and UK law limits physical intervention.
+UK retailers lose **£4.7 billion annually** to shoplifting. Traditional CCTV systems only record — they don't watch. Staff cannot monitor every aisle, and UK law limits physical intervention.
 
 This project builds an **end-to-end deep learning pipeline** that:
 - Analyses CCTV footage in real time using a 3D convolutional neural network
@@ -45,7 +45,7 @@ This project builds an **end-to-end deep learning pipeline** that:
 ```
 Shoplifting_Project/
 │
-├── data/
+├── data/                         # Not included — see Dataset section below
 │   ├── raw/
 │   │   ├── Shoplifting/          # 50 UCF-Crime shoplifting clips
 │   │   └── Normal/               # 50 UCF-Crime normal clips
@@ -62,15 +62,16 @@ Shoplifting_Project/
 │   ├── step7_inference.py        # Live inference + alarm system
 │   └── step8_app.py              # FastAPI web service + dashboard
 │
-├── checkpoints/
+├── checkpoints/                  # Not included — generated after training
 │   ├── best_model.pth            # Saved best model weights
 │   └── training_log.csv          # Epoch-by-epoch accuracy/loss log
 │
-├── exports/
+├── exports/                      # Not included — generated after export
 │   ├── shoplifting_detector.onnx # ONNX format (hardware-agnostic)
 │   └── shoplifting_detector.pt   # TorchScript format
 │
-├── alerts/                       # Auto-saved evidence clips
+├── alerts/                       # Auto-saved evidence clips (generated at runtime)
+├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
@@ -115,7 +116,7 @@ Input (B, 3, 16, 112, 112)
 
 ## 📊 Results
 
-### Training Curve
+### Training Progress
 | Epoch | Train Acc | Val Acc |
 |-------|-----------|---------|
 | 1 | 55.1% | 43.8% |
@@ -171,8 +172,8 @@ Actual Shoplifting   1 ✗              5 ✓
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YourUsername/shoplifting-detection.git
-cd shoplifting-detection
+git clone https://github.com/gowriabinesh-ds/Shoplifting_Detection_Project.git
+cd Shoplifting_Detection_Project
 ```
 
 ### 2. Create Conda Environment
@@ -188,39 +189,52 @@ pip install -r requirements.txt
 ```
 
 ### 4. Download Dataset
-Register and download from [UCF-Crime Dataset](https://www.crcv.ucf.edu/research/real-world-anomaly-detection/)
+The `data/` folder is not included in this repository due to file size.
 
-Place videos in:
+Register (free) and download from: [UCF-Crime Dataset](https://www.crcv.ucf.edu/research/real-world-anomaly-detection/)
+
+Download these two files only:
+- `Anomaly-Videos-Part-4.zip` → extract and copy the `Shoplifting/` subfolder
+- `Normal_Videos_for_Event_Recognition.zip` → extract the normal clips
+
+Place them in your project like this:
 ```
-data/raw/Shoplifting/    ← shoplifting clips
-data/raw/Normal/         ← normal clips
+data/raw/Shoplifting/    ← 50 shoplifting clips
+data/raw/Normal/         ← 50 normal clips
 ```
 
 ### 5. Run the Pipeline
+
+> **Note:** Navigate into the scripts folder first, then run each step in order.
+
 ```bash
-# Step 2 — Extract frames
-python scripts/step2_preprocess.py
+cd scripts
 
-# Step 3 — Verify dataloader
-python scripts/step3_dataset_loader.py
+# Step 2 — Extract 16 frames per clip + CLAHE contrast enhancement
+python step2_preprocess.py
 
-# Step 4 — Verify model
-python scripts/step4_model.py
+# Step 3 — Verify dataloader is working correctly
+python step3_dataset_loader.py
 
-# Step 5 — Train (leave running 1-2 hours on CPU)
-python scripts/step5_train.py
+# Step 4 — Verify model loads correctly
+python step4_model.py
 
-# Step 6 — Export model
-python scripts/step6_export_model.py
+# Step 5 — Train the model (1-2 hours on CPU — leave running)
+python step5_train.py
 
-# Step 7 — Live inference (webcam)
-python scripts/step7_inference.py
+# Step 6 — Export trained model to ONNX and TorchScript
+python step6_export_model.py
 
-# Step 8 — Launch web app
+# Step 7 — Run live inference on webcam
+python step7_inference.py
+```
+
+### 6. Launch the Web App
+```bash
 uvicorn step8_app:app --host 0.0.0.0 --port 8000
 ```
 
-### 6. Open the Dashboard
+Then open your browser and go to:
 ```
 http://localhost:8000
 ```
@@ -228,13 +242,6 @@ http://localhost:8000
 ---
 
 ## 🌐 API Usage
-
-**Start the server:**
-```bash
-conda activate shoplifting
-cd scripts
-uvicorn step8_app:app --host 0.0.0.0 --port 8000
-```
 
 **Upload a video via curl:**
 ```bash
@@ -334,3 +341,4 @@ The UCF-Crime dataset is subject to its own academic use licence — see the [da
 *Deep Learning Project — UK Retail Security*
 
 </div>
+
