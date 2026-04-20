@@ -300,9 +300,8 @@ curl -X POST http://localhost:8000/predict \
 | Prob Shoplifting | 86.1% |
 | Alert | 🔴 ALERT TRIGGERED — Staff Notified + 3 beep alarm |
 
-**Interactive dashboard:** `http://localhost:8000`
+**Interactive dashboard:** `http://localhost:8000`  
 **Swagger UI docs:** `http://localhost:8000/docs`
-
 ---
 
 ## ⚠️ Limitations
