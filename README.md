@@ -20,6 +20,33 @@ This project builds an **end-to-end deep learning pipeline** that:
 
 ## 🎯 Demo
 
+### 🎥 Live Inference Window (step7_inference.py )
+
+Real-time detection on webcam or video file — runs directly using OpenCV.
+
+| | Normal Activity | Shoplifting Detected |
+|-|----------------|---------------------|
+| Label overlay | ✅ Green "Normal  XX%" — top left | 🚨 Red "SHOPLIFTING DETECTED" — top left |
+| Frame border | No border | Thick red border around entire frame |
+| Confidence | Shown as percentage | Shown as percentage below label |
+| Alert badge | None | "!! ALERT — STAFF NOTIFIED !!" flashes at bottom |
+| Sound | Silent | 3 beep alarm plays automatically |
+| Evidence | Nothing saved | Clip auto-saved with timestamp to alerts folder |
+
+**Switch video source — change the last line in step7_inference.py:**
+
+```python
+run_inference(source=0)                   # Live webcam
+run_inference(source=NORMAL_VIDEO)        # Sample normal video
+run_inference(source=SHOPLIFTING_VIDEO)   # Sample shoplifting video
+```
+
+> Press **Q** in the video window to quit. Videos loop automatically — ideal for live demos.
+
+---
+
+### 🌐 Web App Dashboard ( http://localhost:8000 )
+
 | | Normal Activity | Shoplifting Detected |
 |-|----------------|---------------------|
 | Label | ✅ NORMAL — green card | 🚨 SHOPLIFTING DETECTED — red card |
@@ -38,6 +65,7 @@ This project builds an **end-to-end deep learning pipeline** that:
 | Prob Normal | 13.9% |
 | Prob Shoplifting | 86.1% |
 | Alert | 🔴 ALERT TRIGGERED — Staff Notified |
+
 
 ---
 
