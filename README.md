@@ -302,6 +302,7 @@ curl -X POST http://localhost:8000/predict \
 
 **Interactive dashboard:** `http://localhost:8000`  
 **Swagger UI docs:** `http://localhost:8000/docs`
+
 ---
 
 ## ⚠️ Limitations
