@@ -45,7 +45,7 @@ NORMAL_VIDEO      = str(PROJECT_DIR / "Sample_Video_Normal.mp4")
 NUM_FRAMES      = 16     # Frames per model input
 STEP            = 8      # Run model every 8 frames (sliding window)
 IMG_SIZE        = 112    # Must match training size for R3D-18
-CONF_THRESHOLD  = 0.60   # Alarm if confidence >= 60%
+CONF_THRESHOLD  = 0.65   # Alarm if confidence >= 65%
 ALARM_COOLDOWN  = 15     # Time gap between alerts (seconds) to avoid spam
 
 LABEL_NAMES  = {0: "Normal", 1: "SHOPLIFTING DETECTED"}  # Class labels
@@ -198,6 +198,7 @@ def run_inference(source=0):
         print(f"❌ Cannot open video source: {source}")
         return
 
+    run_inference.history = []   # Reset smoothing history each run
     fps         = cap.get(cv2.CAP_PROP_FPS) or 25.0  # Get video FPS
     buffer      = deque(maxlen=NUM_FRAMES)           # Store last 16 frames
     frame_count = 0
@@ -205,6 +206,7 @@ def run_inference(source=0):
     last_label  = 0
     last_conf   = 0.0
     alert_end   = 0       # When to stop showing alert badge
+    alarm_triggered = False    # Only show red overlay when alarm actually fired
 
     print("Running... Press Q in the video window to quit.")
 
@@ -232,24 +234,41 @@ def run_inference(source=0):
 
         # Run model every STEP frames when buffer is full
         if len(buffer) == NUM_FRAMES and frame_count % STEP == 0:
-            label, conf = predict(list(buffer), model, device)  # Predict action
+            label, conf = predict(list(buffer), model, device)
             last_label, last_conf = label, conf
 
-            # Trigger alarm if shoplifting detected
-            if label == 1 and conf >= CONF_THRESHOLD:
-                now = time.time()
-                if now - last_alarm > ALARM_COOLDOWN:
-                    last_alarm = now
-                    alert_end  = now + 4.0    # Show alert badge for 4 seconds
-                    print(f"🚨 SHOPLIFTING DETECTED — confidence: {conf:.1%}")
-                    play_alert_sound()          # Play alarm sound
-                    save_alert_clip(list(buffer), fps)
+            # Add to smoothing history — keeps last 3 predictions
+            if not hasattr(run_inference, 'history'):
+                run_inference.history = []
+            run_inference.history.append((label, conf))
+            if len(run_inference.history) > 3:
+                run_inference.history.pop(0)
 
-        # Check if alert badge should still be showing
+            # Fire if AT LEAST 2 out of last 3 predictions say shoplifting
+            if len(run_inference.history) == 3:
+                count = sum(
+                    1 for l, c in run_inference.history
+                    if l == 1 and c >= CONF_THRESHOLD
+                )
+                if count >= 2:
+                    now = time.time()
+                    if now - last_alarm > ALARM_COOLDOWN:
+                        last_alarm      = now
+                        alert_end       = now + 4.0
+                        alarm_triggered = True     # Mark alarm as fired
+                        print(f"🚨 SHOPLIFTING DETECTED — confidence: {conf:.1%}")
+                        play_alert_sound()
+                        save_alert_clip(list(buffer), fps)
+
+        # Reset alarm display after 4 seconds
+        if time.time() > alert_end:
+            alarm_triggered = False
+
         alert_flash = time.time() < alert_end
 
-        # Draw overlay
-        display = draw_overlay(frame.copy(), last_label, last_conf, alert_flash)
+        # Only show red overlay when alarm actually fired — not on every prediction
+        display_label = 1 if alarm_triggered else 0
+        display = draw_overlay(frame.copy(), display_label, last_conf, alert_flash)
 
         cv2.imshow("Shoplifting Detector", display)
         if cv2.waitKey(1) & 0xFF == ord("q"):
