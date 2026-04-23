@@ -41,7 +41,7 @@ run_inference(source=NORMAL_VIDEO)        # Sample normal video
 run_inference(source=SHOPLIFTING_VIDEO)   # Sample shoplifting video
 ```
 
-> Press **Q** in the video window to quit. Videos loop automatically — ideal for live demos.
+> Press **Q** in the video window to quit. Videos loop automatically.
 
 ---
 
