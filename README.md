@@ -33,7 +33,7 @@ Real-time detection on webcam or video file — runs directly using OpenCV.
 | Sound | Silent | 3 beep alarm plays automatically |
 | Evidence | Nothing saved | Clip auto-saved with timestamp to alerts folder |
 
-**Switch video source — change the last line in step7_inference.py:**
+**Switch video source: change the last line in step7_inference.py:**
 
 ```python
 run_inference(source=0)                   # Live webcam
